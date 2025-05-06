@@ -406,8 +406,5 @@ export const seed = async (knex: Knex): Promise<void> => {
     { role_id: 2, permission_id: 15, menu_order: 15 },
     { role_id: 2, permission_id: 16, menu_order: 16 },
   ]);
-  
-
-  
-  
 };
+
