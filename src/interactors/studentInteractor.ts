@@ -1,16 +1,18 @@
+import { getStudentByGraduation as fetchStudentsByGraduation } from './../repositories/studentRepository';
 import * as StudentService from '../services/studentService';
 import * as UserService from '../services/userService';
-import * as UserProfileService from '../services/userProfileService'
+import * as UserProfileService from '../services/userProfileService';
 import * as UserRoleService from '../services/userRoleService';
 import createUserRequest from '../dtos/createUserRequest';
 import { NotFoundError } from '../errors/notFoundError';
+import { HttpError } from '../errors/httpError';
 
 const studentRole = 1;
 
 export const getStudents = async () => {
   const students = await StudentService.getStudents();
 
-  if (!students) {
+  if (!students || students.length === 0) {
     throw new NotFoundError('There are no students');
   }
 
@@ -28,20 +30,21 @@ export const getStudentByCode = async (studentCode: number) => {
 
 export const createStudent = async (studentData: createUserRequest) => {
   try {
+    console.log(studentData);
     const existingUser = await StudentService.getStudentByEmail(studentData.email);
     if (existingUser) {
-      throw new Error('Estudiante con este email ya existe.');
+      throw new HttpError(409, 'Ya existe un estudiante con este correo electrónico.');
     }
 
     const existingUserWithCode = await StudentService.getStudentByCode(Number(studentData.code));
     if (existingUserWithCode) {
-      throw new Error('Estudiante con este código ya existe.');
+      throw new HttpError(409, 'Ya existe un estudiante con este código.');
     }
 
     const newStudent = await UserService.createUser(studentData);
 
     if (!newStudent) {
-      throw new Error('Error creating the student');
+      throw new HttpError(500, 'Error al crear el estudiante');
     }
 
     const { id } = newStudent;
@@ -51,8 +54,10 @@ export const createStudent = async (studentData: createUserRequest) => {
     }
     return newStudent;
   } catch (error) {
-    console.error('Error in createStudent interactor:', error);
-    throw new Error((error as Error).message);
+    if (error instanceof HttpError) {
+      throw error;
+    }
+    throw new HttpError(500, 'Ocurrió un error inesperado al crear el estudiante');
   }
 };
 
@@ -98,5 +103,21 @@ export const updateStudent = async (studentId: number, studentData: createUserRe
   } catch (error) {
     console.error('Error updating student:', error);
     throw new Error('Error updating student');
+  }
+};
+
+export const getStudentByGraduation = async () => {
+  try {
+    const students = await StudentService.getStudentByGraduation();
+    if (!students) {
+      throw new NotFoundError('There are no students without graduation process');
+    }
+    if (students.length === 0) {
+      throw new NotFoundError('There are no students without graduation process');
+    }
+    return students;
+  } catch (error) {
+    console.error('Error getting students by graduation:', error);
+    throw new Error('Error getting students by graduation');
   }
 };
