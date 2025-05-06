@@ -1,32 +1,11 @@
 import { Knex } from 'knex';
 
-const userProfileTable = 'user_profile';
-const permissionCategoriesTable = 'permission_categories';
 const rolesTable = 'roles';
-const rolesPermissionsTable = 'role_permissions';
+const permissionCategoriesTable = 'permission_categories';
 const permissionsTable = 'permissions';
-const professorTable = 'professors';
-const eventTable = 'events';
-const internsTable = 'interns';
-const eventInternTable = 'events_interns';
-const stagesTable = 'stages';
-const modalitiesTable = 'modalities';
-const gradprocTable = 'graduation_process';
-const studentsTable = 'students';
+const rolesPermissionsTable = 'role_permissions';
 
-exports.seed = async function (knex: Knex) {
-  await knex(gradprocTable).whereNotNull('modality_id').del();
-  await knex(modalitiesTable).del();
-  await knex(rolesTable).del();
-  await knex(permissionCategoriesTable).del();
-  await knex(professorTable).del();
-  await knex(permissionCategoriesTable).del();
-  await knex(internsTable).del();
-  await knex(eventTable).del();
-  await knex(eventInternTable).del();
-  await knex(rolesPermissionsTable).del();
-  await knex(stagesTable).del();
-
+export const seed = async (knex: Knex): Promise<void> => {
   await knex(rolesTable).insert([
     { id: 1, name: 'admin', category: 'admin' },
     { id: 2, name: 'professor', category: 'professor' },
@@ -402,132 +381,33 @@ exports.seed = async function (knex: Knex) {
     },
   ]);
   await knex(rolesPermissionsTable).insert([
-    { role_id: 1, permission_id: 1 },
-    { role_id: 1, permission_id: 2 },
-    { role_id: 1, permission_id: 6 },
-    { role_id: 1, permission_id: 12 },
-    { role_id: 1, permission_id: 18 },
-    { role_id: 2, permission_id: 11 },
-    { role_id: 2, permission_id: 7 },
-    { role_id: 2, permission_id: 6 },
-    { role_id: 2, permission_id: 10 },
-    { role_id: 2, permission_id: 9 },
-    { role_id: 2, permission_id: 8 },
-    { role_id: 2, permission_id: 2 },
-    { role_id: 2, permission_id: 3 },
-    { role_id: 2, permission_id: 4 },
-    { role_id: 2, permission_id: 5 },
-    { role_id: 2, permission_id: 12 },
-    { role_id: 2, permission_id: 13 },
-    { role_id: 2, permission_id: 14 },
-    { role_id: 2, permission_id: 15 },
-    { role_id: 2, permission_id: 16 },
+    { role_id: 1, permission_id: 1, menu_order: 1 },
+    { role_id: 1, permission_id: 18, menu_order: 2 },
+    { role_id: 1, permission_id: 2, menu_order: 2 },
+    { role_id: 1, permission_id: 23, menu_order: 3 },
+    { role_id: 1, permission_id: 26, menu_order: 4 },
+    { role_id: 1, permission_id: 28, menu_order: 5 },
+    { role_id: 1, permission_id: 32, menu_order: 6 },
+    { role_id: 1, permission_id: 24, menu_order: 7 },
+    { role_id: 2, permission_id: 1, menu_order: 1 },
+    { role_id: 2, permission_id: 11, menu_order: 2 },
+    { role_id: 2, permission_id: 7, menu_order: 3 },
+    { role_id: 2, permission_id: 6, menu_order: 4 },
+    { role_id: 2, permission_id: 10, menu_order: 5 },
+    { role_id: 2, permission_id: 9, menu_order: 6 },
+    { role_id: 2, permission_id: 8, menu_order: 7 },
+    { role_id: 2, permission_id: 2, menu_order: 8 },
+    { role_id: 2, permission_id: 3, menu_order: 9 },
+    { role_id: 2, permission_id: 4, menu_order: 10 },
+    { role_id: 2, permission_id: 5, menu_order: 11 },
+    { role_id: 2, permission_id: 12, menu_order: 12 },
+    { role_id: 2, permission_id: 13, menu_order: 13 },
+    { role_id: 2, permission_id: 14, menu_order: 14 },
+    { role_id: 2, permission_id: 15, menu_order: 15 },
+    { role_id: 2, permission_id: 16, menu_order: 16 },
   ]);
-  await knex('professors').insert({
-    id: 2,
-    degree: 'PhD.',
-    department: 'Computer Science',
-    specialty: 'Artificial Intelligence',
-  });
-  await knex(internsTable).insert([
-    {
-      id: 1,
-      user_profile_id: 1,
-      total_hours: 10,
-      pending_hours: 5,
-      completed_hours: 5,
-    },
-    {
-      id: 2,
-      user_profile_id: 2,
-      total_hours: 15,
-      pending_hours: 10,
-      completed_hours: 5,
-    },
-    {
-      id: 3,
-      user_profile_id: 3,
-      total_hours: 20,
-      pending_hours: 10,
-      completed_hours: 10,
-    },
-  ]);
+  
 
-  await knex(eventTable).insert([
-    {
-      id: 1,
-      responsible_intern_id: 1,
-      title: 'Event 1',
-      description: 'Description for event 1',
-      location: 'Location 1',
-      duration_hours: 2,
-      max_interns: 10,
-      min_interns: 5,
-      assigned_hours: 4,
-      start_date: knex.fn.now(),
-      end_date: knex.fn.now(),
-      registration_deadline: knex.fn.now(),
-      start_cancellation_date: knex.fn.now(),
-      end_cancellation_date: knex.fn.now(),
-    },
-    {
-      id: 2,
-      responsible_intern_id: 2,
-      title: 'Event 2',
-      description: 'Description for event 2',
-      location: 'Location 2',
-      duration_hours: 3,
-      max_interns: 15,
-      min_interns: 7,
-      assigned_hours: 4,
-      start_date: knex.fn.now(),
-      end_date: knex.fn.now(),
-      registration_deadline: knex.fn.now(),
-      start_cancellation_date: knex.fn.now(),
-      end_cancellation_date: knex.fn.now(),
-    },
-    {
-      id: 3,
-      responsible_intern_id: 3,
-      title: 'Event 3',
-      description: 'Description for event 3',
-      location: 'Location 3',
-      duration_hours: 4,
-      max_interns: 20,
-      min_interns: 10,
-      assigned_hours: 4,
-      start_date: knex.fn.now(),
-      end_date: knex.fn.now(),
-      registration_deadline: knex.fn.now(),
-      start_cancellation_date: knex.fn.now(),
-      end_cancellation_date: knex.fn.now(),
-    },
-  ]);
-
-  await knex(eventInternTable).insert([
-    {
-      intern_id: 1,
-      event_id: 1,
-      type: 'accepted',
-      worked_hours: 20,
-    },
-    {
-      intern_id: 2,
-      event_id: 2,
-      type: 'pending',
-      worked_hours: 20,
-    },
-    {
-      intern_id: 3,
-      event_id: 3,
-      type: 'reserve',
-      worked_hours: 20,
-    },
-  ]);
-  await knex(studentsTable).insert([
-    {
-      id: 7,
-      is_scholarship: true,
-    },
-  ]);
+  
+  
 };
