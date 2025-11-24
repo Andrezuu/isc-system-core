@@ -32,6 +32,7 @@ jobs:
           key: ${{ secrets.EC2_KEY }}
           source: "dist/*"
           target: "/var/www/api"
+          version: "v1.7.3"  
 
       - name: Reiniciar el backend con pm2
         uses: appleboy/ssh-action@v1
