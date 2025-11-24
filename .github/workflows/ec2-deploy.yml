@@ -1,5 +1,3 @@
-name: Deploy Backend
-
 on:
   push:
     branches: [ develop ]
@@ -24,17 +22,21 @@ jobs:
       - name: Build de backend
         run: npm run build
 
-      - name: Configurar SSH y 
+      - name: Configurar SSH
         run: |
           mkdir -p ~/.ssh
           ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
 
-      - name: Subir backend con SCP 
+      - name: Subir backend con SCP
         run: |
           echo "${{ secrets.EC2_KEY }}" > private_key.pem
           chmod 600 private_key.pem
-          scp -i private_key.pem -r dist/* ubuntu@${{ secrets.EC2_HOST }}:/var/www/api
+
+          scp -i private_key.pem -r dist/* package*.json ubuntu@${{ secrets.EC2_HOST }}:/var/www/api
+
+          # Subir .env
           ssh -i private_key.pem ubuntu@${{ secrets.EC2_HOST }} "echo '${{ secrets.BACKEND_ENV }}' > /var/www/api/.env && chmod 600 /var/www/api/.env"
+
           rm private_key.pem
 
       - name: Reiniciar el backend con pm2
@@ -45,6 +47,7 @@ jobs:
           key: ${{ secrets.EC2_KEY }}
           script: |
             cd /var/www/api
+            npm install --omit-dev          
             pm2 restart api || pm2 start index.js --name api
             pm2 save
 
