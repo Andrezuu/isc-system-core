@@ -19,7 +19,7 @@ jobs:
           node-version: 20
 
       - name: Instalar dependencias
-        run: npm install
+        run: npm install --omit-dev
 
       - name: Build de backend
         run: npm run build
@@ -32,7 +32,6 @@ jobs:
           key: ${{ secrets.EC2_KEY }}
           source: "dist/*"
           target: "/var/www/api"
-          version: "v1.7.3"  
 
       - name: Reiniciar el backend con pm2
         uses: appleboy/ssh-action@v1
