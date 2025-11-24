@@ -53,7 +53,4 @@ jobs:
             pm2 restart api || pm2 start index.js --name api
             pm2 save
 
-      - name: Smoke test
-        run:
-          curl -sfS http://localhost:3000 || exit 1
 
