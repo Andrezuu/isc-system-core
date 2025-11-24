@@ -34,6 +34,7 @@ jobs:
           echo "${{ secrets.EC2_KEY }}" > private_key.pem
           chmod 600 private_key.pem
           scp -i private_key.pem -r dist/* ubuntu@${{ secrets.EC2_HOST }}:/var/www/api
+          ssh -i private_key.pem ubuntu@${{ secrets.EC2_HOST }} "echo '${{ secrets.BACKEND_ENV }}' > /var/www/api/.env && chmod 600 /var/www/api/.env"
           rm private_key.pem
 
       - name: Reiniciar el backend con pm2
