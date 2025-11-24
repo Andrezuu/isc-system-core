@@ -1,4 +1,4 @@
-name: Deploy Backend 
+name: Deploy Backend
 
 on:
   push:
@@ -24,12 +24,17 @@ jobs:
       - name: Build de backend
         run: npm run build
 
+      - name: Configurar SSH y 
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+
       - name: Subir backend con SCP 
         run: |
           echo "${{ secrets.EC2_KEY }}" > private_key.pem
           chmod 600 private_key.pem
           scp -i private_key.pem -r dist/* ubuntu@${{ secrets.EC2_HOST }}:/var/www/api
-
+          rm private_key.pem
 
       - name: Reiniciar el backend con pm2
         uses: appleboy/ssh-action@v1
@@ -41,3 +46,4 @@ jobs:
             cd /var/www/api
             pm2 restart api || pm2 start index.js --name api
             pm2 save
+
