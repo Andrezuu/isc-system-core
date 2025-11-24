@@ -44,7 +44,6 @@ jobs:
           key: ${{ secrets.EC2_KEY }}
           script: |
             cd /var/www/api
-            npm install -g pm2
             pm2 restart api || pm2 start index.js --name api
             pm2 save
 
