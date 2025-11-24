@@ -24,7 +24,7 @@ jobs:
       - name: Build de backend
         run: npm run build
 
-      - name: Configurar SSH y 
+      - name: Configurar SSH 
         run: |
           mkdir -p ~/.ssh
           ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
@@ -33,7 +33,7 @@ jobs:
         run: |
           echo "${{ secrets.EC2_KEY }}" > private_key.pem
           chmod 600 private_key.pem
-          scp -i private_key.pem -r dist/* ubuntu@${{ secrets.EC2_HOST }}:/var/www/api
+          sudo scp -i private_key.pem -r dist/* ubuntu@${{ secrets.EC2_HOST }}:/var/www/api
           rm private_key.pem
 
       - name: Reiniciar el backend con pm2
