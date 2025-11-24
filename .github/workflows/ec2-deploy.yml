@@ -24,14 +24,12 @@ jobs:
       - name: Build de backend
         run: npm run build
 
-      - name: Subir archivos con scp
-        uses: appleboy/scp-action@v0.1.6
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_KEY }}
-          source: "dist/*"
-          target: "/var/www/api"
+      - name: Subir backend con SCP 
+    run: |
+      echo "${{ secrets.EC2_KEY }}" > private_key.pem
+      chmod 600 private_key.pem
+      scp -i private_key.pem -r dist/* ubuntu@${{ secrets.EC2_HOST }}:/var/www/api
+
 
       - name: Reiniciar el backend con pm2
         uses: appleboy/ssh-action@v1
