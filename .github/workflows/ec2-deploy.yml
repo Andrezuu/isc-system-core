@@ -1,0 +1,47 @@
+name: Deploy Backend & Frontend
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout 
+        uses: actions/checkout@v4
+
+      - name: Configurar Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Instalar dependencias
+        working-directory: ./server
+        run: npm install
+
+      - name: Build de backend
+        working-directory: ./server
+        run: npm run build
+
+      - name: Subir archivos con scp
+        uses: appleboy/scp-action@v1
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_KEY }}
+          source: "server/dist/*"
+          target: "/var/www/api"
+
+      - name: Reiniciar el backend con pm2
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_KEY }}
+          script: |
+            cd /var/www/api
+            pm2 restart api || pm2 start index.js --name api
+            pm2 save
