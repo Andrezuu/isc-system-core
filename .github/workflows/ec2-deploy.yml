@@ -19,11 +19,9 @@ jobs:
           node-version: 20
 
       - name: Instalar dependencias
-        working-directory: ./server
         run: npm install
 
       - name: Build de backend
-        working-directory: ./server
         run: npm run build
 
       - name: Subir archivos con scp
