@@ -25,10 +25,10 @@ jobs:
         run: npm run build
 
       - name: Subir backend con SCP 
-    run: |
-      echo "${{ secrets.EC2_KEY }}" > private_key.pem
-      chmod 600 private_key.pem
-      scp -i private_key.pem -r dist/* ubuntu@${{ secrets.EC2_HOST }}:/var/www/api
+        run: |
+          echo "${{ secrets.EC2_KEY }}" > private_key.pem
+          chmod 600 private_key.pem
+          scp -i private_key.pem -r dist/* ubuntu@${{ secrets.EC2_HOST }}:/var/www/api
 
 
       - name: Reiniciar el backend con pm2
